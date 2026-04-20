@@ -178,6 +178,8 @@ export class GenerativeAiUseCasesStack extends Stack {
       crossAccountBedrockRoleArn: params.crossAccountBedrockRoleArn,
       allowedIpV4AddressRanges: params.allowedIpV4AddressRanges,
       allowedIpV6AddressRanges: params.allowedIpV6AddressRanges,
+      searchApiKey: params.searchApiKey,
+      searchEngine: params.searchEngine,
       additionalS3Buckets: [
         ...(props.agentCoreStack?.fileBucket
           ? [props.agentCoreStack.fileBucket]
@@ -335,6 +337,7 @@ export class GenerativeAiUseCasesStack extends Stack {
             description: 'Research Agent Core Runtime with Claude Agent SDK',
           }
         : undefined,
+      webSearchChatEnabled: params.webSearchChatEnabled,
       // Frontend
       hiddenUseCases: params.hiddenUseCases,
       // Custom Domain

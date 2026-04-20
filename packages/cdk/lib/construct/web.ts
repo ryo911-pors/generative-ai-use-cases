@@ -70,6 +70,7 @@ export interface WebProps {
   readonly agentCoreRegion?: string;
   readonly researchAgentEnabled: boolean;
   readonly researchAgentRuntime?: AgentCoreConfiguration;
+  readonly webSearchChatEnabled: boolean;
   readonly brandingConfig?: {
     logoPath?: string;
     title?: string;
@@ -312,6 +313,7 @@ export class Web extends Construct {
         VITE_APP_RESEARCH_AGENT_RUNTIME: JSON.stringify(
           props.researchAgentRuntime
         ),
+        VITE_APP_WEB_SEARCH_CHAT_ENABLED: props.webSearchChatEnabled.toString(),
         VITE_APP_BRANDING_LOGO_PATH: props.brandingConfig?.logoPath ?? '',
         VITE_APP_BRANDING_TITLE: props.brandingConfig?.title ?? '',
       },
