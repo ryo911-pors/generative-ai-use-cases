@@ -13,6 +13,16 @@ const getContext = (app: cdk.App): StackInput => {
   return params;
 };
 
+// Apply secret fallbacks from environment variables (loaded by dotenv in the
+// bin entry point). This lets us keep cdk.json free of API keys while still
+// exposing them to the stack at synth time.
+const applyEnvSecrets = <T extends StackInput>(params: T): T => {
+  if (!params.searchApiKey && process.env.TAVILY_API_KEY) {
+    params.searchApiKey = process.env.TAVILY_API_KEY;
+  }
+  return params;
+};
+
 // If you want to define parameters directly
 const envs: Record<string, Partial<StackInput>> = {
   // If you want to define an anonymous environment, uncomment the following and the content of cdk.json will be ignored.
@@ -45,6 +55,9 @@ export const getParams = (app: cdk.App): ProcessedStackInput => {
       env: params.env,
     });
   }
+
+  // Fill in secret fields from environment variables when missing in context.
+  params = applyEnvSecrets(params);
   // Make the format of modelIds, imageGenerationModelIds consistent
   const convertToModelConfiguration = (
     models: (string | ModelConfiguration)[],

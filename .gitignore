@@ -15,3 +15,11 @@ site*/
 .kiro/settings
 .kiro/specs
 deploy.log
+
+# Environment variables (contain secrets, loaded by CDK via dotenv)
+.env
+.env.local
+.env.*.local
+
+# CDK synth output
+packages/cdk/cdk.out/
