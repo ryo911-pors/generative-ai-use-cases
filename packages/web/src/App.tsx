@@ -51,6 +51,8 @@ const agentBuilderEnabled: boolean =
   import.meta.env.VITE_APP_AGENT_CORE_AGENT_BUILDER_ENABLED === 'true';
 const researchAgentEnabled: boolean =
   import.meta.env.VITE_APP_RESEARCH_AGENT_ENABLED === 'true';
+const webSearchChatEnabled: boolean =
+  import.meta.env.VITE_APP_WEB_SEARCH_CHAT_ENABLED === 'true';
 
 const {
   visionEnabled,
@@ -115,6 +117,15 @@ const App: React.FC = () => {
           icon: <PiChatCircleText />,
           display: 'usecase' as const,
           sub: 'Knowledge Base',
+        }
+      : null,
+    webSearchChatEnabled
+      ? {
+          label: t('navigation.webSearchChat'),
+          to: '/web-search-chat',
+          icon: <PiMagnifyingGlass />,
+          display: 'usecase' as const,
+          sub: 'Web Search',
         }
       : null,
     agentEnabled && !inlineAgents
