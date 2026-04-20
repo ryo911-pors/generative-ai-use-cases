@@ -772,6 +772,7 @@ navigation:
   videoGeneration: 動画生成
   voiceChat: 音声チャット
   webContentExtraction: Web コンテンツ抽出
+  webSearchChat: Web 検索チャット
   writing: 執筆
 notfound:
   title: ページが見つかりません
@@ -1239,6 +1240,11 @@ voiceChat:
   im_listening: 発言してください
   start: セッションを始める
   title: 音声チャット
+webSearchChat:
+  errorSearch: Web 検索に失敗しました。検索APIキーの設定を確認してください。
+  noResults: 検索結果が見つかりませんでした。質問を変えてお試しください。
+  searching: Web を検索中...
+  title: Web 検索チャット
 webcontent:
   additional_context: 追加コンテキスト
   additional_context_placeholder: '追加で考慮してほしい点を入力することができます（例: 要約して）'

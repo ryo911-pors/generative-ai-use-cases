@@ -926,6 +926,7 @@ navigation:
   videoGeneration: Video Generation
   voiceChat: Voice Chat
   webContentExtraction: Web Content Extraction
+  webSearchChat: Web Search Chat
   writing: Writing
 notfound:
   title: Not Found
@@ -1507,6 +1508,11 @@ voiceChat:
   im_listening: I'm listening...
   start: Start new session
   title: Voice Chat
+webSearchChat:
+  errorSearch: Web search failed. Please check your search API key configuration.
+  noResults: No search results found. Please rephrase your question and try again.
+  searching: Searching the web...
+  title: Web Search Chat
 webcontent:
   additional_context: Additional context
   additional_context_placeholder: You can enter additional points to consider (e.g., summarize)
