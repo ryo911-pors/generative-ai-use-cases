@@ -62,19 +62,28 @@ const useWebSearchChat = (id: string, chatId?: string) => {
       pushMessage('assistant', t('webSearchChat.searching'));
 
       // Step 1: Generate a search query using the LLM
-      const query = await predict({
-        model,
-        messages: [
-          {
-            role: 'user',
-            content: prompter.webSearchPrompt({
-              promptType: 'RETRIEVE',
-              retrieveQueries: [...prevQueries, content],
-            }),
-          },
-        ],
-        id,
-      });
+      let query: string;
+      try {
+        query = await predict({
+          model,
+          messages: [
+            {
+              role: 'user',
+              content: prompter.webSearchPrompt({
+                promptType: 'RETRIEVE',
+                retrieveQueries: [...prevQueries, content],
+              }),
+            },
+          ],
+          id,
+        });
+      } catch (error) {
+        console.error(error);
+        popMessage();
+        pushMessage('assistant', t('webSearchChat.errorSearch'));
+        setLoading(false);
+        return;
+      }
 
       // Step 2: Call the web search API
       let items: WebSearchResultItem[] = [];
