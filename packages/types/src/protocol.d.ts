@@ -211,6 +211,20 @@ export type WebTextResponse = {
   text: string;
 };
 
+export type WebSearchResultItem = {
+  title: string;
+  url: string;
+  content: string;
+};
+
+export type WebSearchRequest = {
+  query: string;
+};
+
+export type WebSearchResponse = {
+  items: WebSearchResultItem[];
+};
+
 export type CreateShareIdResponse = {
   shareId: ShareId;
   userIdAndChatId: UserIdAndChatId;
