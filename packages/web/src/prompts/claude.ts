@@ -10,6 +10,7 @@ import {
   TranslateParams,
   VideoAnalyzerParams,
   WebContentParams,
+  WebSearchParams,
   DiagramParams,
   MeetingMinutesParams,
 } from './index';
@@ -111,6 +112,7 @@ Format the result in markdown with chapters and output it in the format <output>
 Do not output any text other than the result enclosed in <output></output> tags. There are no exceptions.
 Automatically detect the language of the user's request and think and answer in the same language.`,
   '/rag': '',
+  '/web-search-chat': '',
   '/image': `You are an AI assistant that generates prompts for Stable Diffusion.
 Please generate Stable Diffusion prompts following the <step></step> procedure.
 
@@ -302,6 +304,75 @@ ${params
 * If the question does not have specificity and cannot be answered, advise the user on how to ask the question.
 * Do not output any text other than the answer. The answer must be in text format, not JSON format. Do not include headings or titles.
 * Please note that your response will be rendered in Markdown. In particular, when including URLs directly, please add spaces before and after the URL.
+</Answer rules>
+`;
+    }
+  },
+  webSearchPrompt(params: WebSearchParams): string {
+    if (params.promptType === 'RETRIEVE') {
+      return `You are an AI assistant that generates web search queries.
+Please generate a web search query following the <Query generation steps></Query generation steps>.
+
+<Query generation steps>
+* Please understand the content of <Query history></Query history>. The history is arranged in chronological order, with the newest query at the bottom.
+* Ignore queries that are not questions. Examples of queries to ignore: "Summarize", "Translate", "Calculate".
+* The most important thing for the user is the content of the newest query. Based on the content of the newest query, generate a search query within 30 tokens.
+* If the output query does not have a subject, add a subject. Do not replace the subject.
+* If you need to complement the subject or background, please use the content of <Query history>.
+* Do not use conversational suffixes like "About 〜", "Tell me about 〜", "Explain 〜" in the query. Produce a query as if typing into a web search box.
+* If there is no output query, output "No Query".
+* Output only the generated query. Do not output any other text. There are no exceptions.
+* Automatically detect the language of the user's request and answer in the same language.
+</Query generation steps>
+
+<Query history>
+${params.retrieveQueries!.map((q) => `* ${q}`).join('\n')}
+</Query history>
+`;
+    } else {
+      return `You are an AI assistant that answers user questions using web search results.
+Please follow the steps below to answer the user's question. Do not do anything else.
+
+<Answer steps>
+* Please understand the content of <Search results></Search results>. The results are set in the format of <Search results JSON format>.
+* Please understand the content of <Answer rules>. This rule must be followed absolutely. There are no exceptions.
+* The user's question will be input in the chat. Please answer the question following the content of <Search results> and <Answer rules>.
+</Answer steps>
+
+<Search results JSON format>
+{
+"SourceId": The ID of the search result (0-indexed),
+"Title": "The title of the web page.",
+"Url": "The URL of the web page.",
+"Content": "The snippet or summary content of the web page. Please answer the question based on this content.",
+}[]
+</Search results JSON format>
+
+<Search results>
+[
+${params
+  .referenceItems!.map((item, idx) => {
+    return `${JSON.stringify({
+      SourceId: idx,
+      Title: item.title,
+      Url: item.url,
+      Content: item.content,
+    })}`;
+  })
+  .join(',\n')}
+]
+</Search results>
+
+<Answer rules>
+* Please answer the question based on <Search results>. Prefer newer and more reliable information.
+* Add the SourceId of the referenced search result in the format [^<SourceId>] at the end of each relevant claim. The same SourceId can be used multiple times.
+* At least one [^<SourceId>] must appear whenever you cite information from the search results.
+* If the information in <Search results> is not enough to answer, clearly state that the information was insufficient and suggest rephrasing the question.
+* Do not respond to casual conversations or greetings. Output only "I cannot respond to casual conversations. Please use the normal chat function." and do not output any other text.
+* Do not output raw URLs. URLs will be added automatically to the end of the answer as footnotes.
+* The answer must be in plain text / markdown format (not JSON). Do not include headings or titles.
+* Your response will be rendered in Markdown.
+* Automatically detect the language of the user's question and answer in the same language.
 </Answer rules>
 `;
     }

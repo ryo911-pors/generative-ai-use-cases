@@ -1,4 +1,7 @@
-import { UnrecordedMessage } from 'generative-ai-use-cases';
+import {
+  UnrecordedMessage,
+  WebSearchResultItem,
+} from 'generative-ai-use-cases';
 import { RetrieveResultItem } from '@aws-sdk/client-kendra';
 import { claudePrompter } from './claude';
 import { TFunction } from 'i18next';
@@ -50,6 +53,12 @@ export type RagParams = {
   promptType: 'RETRIEVE' | 'SYSTEM_CONTEXT';
   retrieveQueries?: string[];
   referenceItems?: RetrieveResultItem[];
+};
+
+export type WebSearchParams = {
+  promptType: 'RETRIEVE' | 'SYSTEM_CONTEXT';
+  retrieveQueries?: string[];
+  referenceItems?: WebSearchResultItem[];
 };
 
 export type VideoAnalyzerParams = {
@@ -108,6 +117,7 @@ export interface Prompter {
   translatePrompt(params: TranslateParams): string;
   webContentPrompt(params: WebContentParams): string;
   ragPrompt(params: RagParams): string;
+  webSearchPrompt(params: WebSearchParams): string;
   videoAnalyzerPrompt(params: VideoAnalyzerParams): string;
   setTitlePrompt(params: SetTitleParams): string;
   promptList(t: TFunction): PromptList;
