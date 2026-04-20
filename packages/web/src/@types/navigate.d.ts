@@ -48,6 +48,10 @@ export type RagPageQueryParams = BaseQueryParams & {
   systemContext?: string;
 };
 
+export type WebSearchChatPageQueryParams = BaseQueryParams & {
+  content?: string;
+};
+
 export type AgentPageQueryParams = BaseQueryParams & {
   content?: string;
 };
