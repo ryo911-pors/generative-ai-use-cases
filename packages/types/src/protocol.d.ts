@@ -211,7 +211,7 @@ export type WebTextResponse = {
   text: string;
 };
 
-export type WebSearchResultItem = {
+export type WebSearchResultItem = {  //webSearch.tsでimport 
   title: string;
   url: string;
   content: string;
