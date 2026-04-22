@@ -1,3 +1,6 @@
+//parameter.ts の getParams で stackInputSchema.parse() → convertToModelConfiguration() で変換 → 最終的に   
+//ProcessedStackInput 型として返す
+
 import { z } from 'zod';
 
 // Base schema without refine
@@ -209,8 +212,8 @@ const baseStackInputSchema = z.object({
   closedNetworkCreateResolverEndpoint: z.boolean().default(true),
 });
 
-// Common Validator with refine
-export const stackInputSchema = baseStackInputSchema.refine(
+// 自由な書き方を受け付ける。
+export const stackInputSchema = baseStackInputSchema.refine( //追加情報
   (data) => {
     // If searchApiKey is provided, searchEngine must also be provided
     if (data.searchApiKey && !data.searchEngine) {
