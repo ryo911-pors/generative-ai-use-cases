@@ -179,7 +179,6 @@ export class GenerativeAiUseCasesStack extends Stack {
       allowedIpV4AddressRanges: params.allowedIpV4AddressRanges,
       allowedIpV6AddressRanges: params.allowedIpV6AddressRanges,
       searchApiKey: params.searchApiKey,
-      searchEngine: params.searchEngine,
       additionalS3Buckets: [
         ...(props.agentCoreStack?.fileBucket
           ? [props.agentCoreStack.fileBucket]

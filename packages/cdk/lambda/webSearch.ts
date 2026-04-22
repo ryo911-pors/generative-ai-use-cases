@@ -1,41 +1,12 @@
 import * as lambda from 'aws-lambda';
 import {
-  BraveSearchResult,
   TavilySearchResult,
   WebSearchRequest,
   WebSearchResponse,
   WebSearchResultItem,
 } from 'generative-ai-use-cases';
-import { StackInput } from '../lib/stack-input';
 
 const MAX_RESULTS = 5;
-
-const searchUsingBrave = async (
-  query: string
-): Promise<WebSearchResultItem[]> => {
-  const searchUrl = `https://api.search.brave.com/res/v1/web/search?q=${encodeURIComponent(
-    query
-  )}&count=${MAX_RESULTS}&text_decorations=0`;
-  const searchApiKey = process.env.SEARCH_API_KEY || '';
-  const response = await fetch(searchUrl, {
-    headers: {
-      'X-Subscription-Token': searchApiKey,
-    },
-  });
-  if (!response.ok) {
-    throw new Error(`Brave Search API failed: ${response.status}`);
-  }
-  const data = await response.json();
-  return (data.web?.results ?? []).map(
-    (result: BraveSearchResult): WebSearchResultItem => ({
-      title: result.title,
-      url: result.url,
-      content: [result.description, ...(result.extra_snippets ?? [])]
-        .filter(Boolean)
-        .join(' '),
-    })
-  );
-};
 
 const searchUsingTavily = async (
   query: string
@@ -86,7 +57,7 @@ export const handler = async (
         headers,
         body: JSON.stringify({
           error:
-            'SEARCH_API_KEY is not configured. Set searchApiKey in cdk.json.',
+            'SEARCH_API_KEY is not configured. Set TAVILY_API_KEY in .env.',
         }),
       };
     }
@@ -102,13 +73,7 @@ export const handler = async (
       };
     }
 
-    const searchEngine = (process.env.SEARCH_ENGINE ||
-      'Tavily') as StackInput['searchEngine'];
-
-    const items =
-      searchEngine === 'Brave'
-        ? await searchUsingBrave(query)
-        : await searchUsingTavily(query);
+    const items = await searchUsingTavily(query);
 
     const response: WebSearchResponse = { items };
 

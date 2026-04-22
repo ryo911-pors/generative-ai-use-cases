@@ -27,7 +27,6 @@ import {
   HttpMethods,
 } from 'aws-cdk-lib/aws-s3';
 import { Agent, AgentInfo, ModelConfiguration } from 'generative-ai-use-cases';
-import { StackInput } from '../stack-input';
 import {
   BEDROCK_IMAGE_GEN_MODELS,
   BEDROCK_VIDEO_GEN_MODELS,
@@ -58,7 +57,6 @@ export interface BackendApiProps {
   readonly allowedIpV6AddressRanges?: string[] | null;
   readonly additionalS3Buckets?: Bucket[];
   readonly searchApiKey?: string | null;
-  readonly searchEngine?: StackInput['searchEngine'];
 
   // Resource
   readonly userPool: UserPool;
@@ -688,7 +686,6 @@ export class Api extends Construct {
       timeout: Duration.minutes(1),
       environment: {
         SEARCH_API_KEY: props.searchApiKey ?? '',
-        SEARCH_ENGINE: props.searchEngine ?? 'Tavily',
       },
       vpc,
       securityGroups,
