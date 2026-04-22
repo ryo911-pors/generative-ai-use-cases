@@ -1,3 +1,10 @@
+//lambda関数定義 
+//NodejsFunctionでlambdaが定義される。
+//lambdaIntegrationでAPI Gatewayルートと結合。
+//環境変数はenvironmentで設定される。
+
+
+
 import { Stack, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import {
   AuthorizationType,
@@ -680,7 +687,7 @@ export class Api extends Construct {
       securityGroups,
     });
 
-    const webSearchFunction = new NodejsFunction(this, 'WebSearch', {
+    const webSearchFunction = new NodejsFunction(this, 'WebSearch', {  //lambda関数定義
       runtime: LAMBDA_RUNTIME_NODEJS,
       entry: './lambda/webSearch.ts',
       timeout: Duration.minutes(1),
