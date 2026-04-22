@@ -41,7 +41,7 @@ const searchUsingTavily = async (
   );
 };
 
-export const handler = async (
+export const handler = async (  //handlerはNodejsが自動的に見つけて実行。CDK側でlambdaとしてデプロイしてる。
   event: lambda.APIGatewayProxyEvent
 ): Promise<lambda.APIGatewayProxyResult> => {
   const headers = {
@@ -75,7 +75,7 @@ export const handler = async (
 
     const items = await searchUsingTavily(query);
 
-    const response: WebSearchResponse = { items };
+    const response: WebSearchResponse = { items }; //不明点
 
     return {
       statusCode: 200,
