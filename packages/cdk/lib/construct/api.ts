@@ -1097,7 +1097,7 @@ export class Api extends Construct {
       commonAuthorizerProps
     );
 
-    // Used in the web search chat use case
+    //URLのルーティングの追加
     const webSearchResource = api.root.addResource('web-search');
     // POST: /web-search
     webSearchResource.addMethod(
