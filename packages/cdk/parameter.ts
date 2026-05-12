@@ -13,9 +13,7 @@ const getContext = (app: cdk.App): StackInput => {
   return params;
 };
 
-// Apply secret fallbacks from environment variables (loaded by dotenv in the
-// bin entry point). This lets us keep cdk.json free of API keys while still
-// exposing them to the stack at synth time.
+
 const applyEnvSecrets = <T extends StackInput>(params: T): T => {
   if (!params.searchApiKey && process.env.TAVILY_API_KEY) {
     params.searchApiKey = process.env.TAVILY_API_KEY;
@@ -23,7 +21,7 @@ const applyEnvSecrets = <T extends StackInput>(params: T): T => {
   return params;
 };
 
-// If you want to define parameters directly
+// 環境ごと (dev/staging/prod) の設定をコードで直接書きたい人向け
 const envs: Record<string, Partial<StackInput>> = {
   // If you want to define an anonymous environment, uncomment the following and the content of cdk.json will be ignored.
   // If you want to define an anonymous environment in parameter.ts, uncomment the following and the content of cdk.json will be ignored.
@@ -43,7 +41,7 @@ const envs: Record<string, Partial<StackInput>> = {
   // If you need other environments, customize them as needed
 };
 
-// For backward compatibility, get parameters from CDK Context > parameter.ts
+// 上記のconst envsを見る
 export const getParams = (app: cdk.App): ProcessedStackInput => {
   // By default, get parameters from CDK Context
   let params = getContext(app);
@@ -56,7 +54,8 @@ export const getParams = (app: cdk.App): ProcessedStackInput => {
     });
   }
 
-  // Fill in secret fields from environment variables when missing in context.
+  //  - 文字列だけ: "anthropic.claude-3-5-sonnet" → リージョンは modelRegion を使う
+  //  - オブジェクト: { modelId: "...", region: "us-west-2" } → 個別リージョン指定
   params = applyEnvSecrets(params);
   // Make the format of modelIds, imageGenerationModelIds consistent
   const convertToModelConfiguration = (
