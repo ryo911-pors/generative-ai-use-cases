@@ -3,7 +3,7 @@ import {
   TavilySearchResult,
   WebSearchRequest,
   WebSearchResponse,
-  WebSearchResultItem,
+  WebSearchResultItem,  // src/protocol.d.ts:214で定義
 } from 'generative-ai-use-cases';
 
 const MAX_RESULTS = 5;
