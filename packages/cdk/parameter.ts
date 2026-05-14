@@ -9,7 +9,7 @@ import { loadBrandingConfig } from './branding';
 
 // Get parameters from CDK Context
 const getContext = (app: cdk.App): StackInput => {
-  const params = stackInputSchema.parse(app.node.getAllContext());
+  const params = stackInputSchema.parse(app.node.getAllContext()); //cdk.jsonのcontextをzodで通し検証。空の場合zodのdefaultで対応。
   return params;
 };
 
