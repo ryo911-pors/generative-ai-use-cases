@@ -1,25 +1,25 @@
 import * as lambda from 'aws-lambda';
 import {
-  TavilySearchResult,
+  TavilySearchResult,  // type/src/agent.d.ts
   WebSearchRequest,
-  WebSearchResponse,
-  WebSearchResultItem,  // src/protocol.d.ts:214で定義
+  WebSearchResponse,  
+  WebSearchResultItem,  // type/src/protocol.d.ts:214で定義
 } from 'generative-ai-use-cases';
 
 const MAX_RESULTS = 5;
 
-const searchUsingTavily = async (
+const searchUsingTavily = async (  //tavilyに検索を頼み、WebSearchResultItem型に整形して返す。
   query: string
 ): Promise<WebSearchResultItem[]> => {
   const searchUrl = 'https://api.tavily.com/search';
   const searchApiKey = process.env.SEARCH_API_KEY || '';
-  const response = await fetch(searchUrl, {
+  const response = await fetch(searchUrl, { 
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${searchApiKey}`,
     },
-    body: JSON.stringify({
+    body: JSON.stringify({ //送るもの
       query,
       search_depth: 'basic',
       include_answer: false,
@@ -31,9 +31,9 @@ const searchUsingTavily = async (
   if (!response.ok) {
     throw new Error(`Tavily Search API failed: ${response.status}`);
   }
-  const data = await response.json();
+  const data = await response.json();   //Tavily から届いた JSON 文字列を、JavaScript のオブジェクトに変換して data に入れる。
   return (data.results ?? []).map(
-    (result: TavilySearchResult): WebSearchResultItem => ({
+    (result: TavilySearchResult): WebSearchResultItem => ({    //引数はTavilySearchResult型
       title: result.title,
       url: result.url,
       content: result.content ?? '',
