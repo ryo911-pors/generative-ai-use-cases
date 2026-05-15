@@ -1,14 +1,18 @@
 import * as lambda from 'aws-lambda';
+import { z } from 'zod';
 import {
-  TavilySearchResult,  // type/src/agent.d.ts
-  WebSearchRequest,
-  WebSearchResponse,  
-  WebSearchResultItem,  // type/src/protocol.d.ts:214で定義
+  TavilySearchResult, // type/src/agent.d.ts
+  WebSearchResponse,
+  WebSearchResultItem, // defined in type/src/protocol.d.ts:214
 } from 'generative-ai-use-cases';
 
 const MAX_RESULTS = 5;
 
-const searchUsingTavily = async (  //tavilyに検索を頼み、WebSearchResultItem型に整形して返す。
+const webSearchRequestSchema = z.object({
+  query: z.string().min(1).max(500),
+});
+
+const searchUsingTavily = async ( // ask Tavily to search, reshape into WebSearchResultItem[]
   query: string
 ): Promise<WebSearchResultItem[]> => {
   const searchUrl = 'https://api.tavily.com/search';
@@ -19,7 +23,7 @@ const searchUsingTavily = async (  //tavilyに検索を頼み、WebSearchResultI
       'Content-Type': 'application/json',
       Authorization: `Bearer ${searchApiKey}`,
     },
-    body: JSON.stringify({ //送るもの
+    body: JSON.stringify({ // what we send
       query,
       search_depth: 'basic',
       include_answer: false,
@@ -31,9 +35,9 @@ const searchUsingTavily = async (  //tavilyに検索を頼み、WebSearchResultI
   if (!response.ok) {
     throw new Error(`Tavily Search API failed: ${response.status}`);
   }
-  const data = await response.json();   //Tavily から届いた JSON 文字列を、JavaScript のオブジェクトに変換して data に入れる。
+  const data = await response.json(); // parse Tavily's JSON string into a JS object
   return (data.results ?? []).map(
-    (result: TavilySearchResult): WebSearchResultItem => ({    //引数はTavilySearchResult型
+    (result: TavilySearchResult): WebSearchResultItem => ({ // arg is of type TavilySearchResult
       title: result.title,
       url: result.url,
       content: result.content ?? '',
@@ -41,12 +45,12 @@ const searchUsingTavily = async (  //tavilyに検索を頼み、WebSearchResultI
   );
 };
 
-export const handler = async (  //handlerはNodejsが自動的に見つけて実行。CDK側でlambdaとしてデプロイしてる。
+export const handler = async ( // Node.js auto-discovers and runs this; deployed as a Lambda by CDK
   event: lambda.APIGatewayProxyEvent
 ): Promise<lambda.APIGatewayProxyResult> => {
   const headers = {
     'Content-Type': 'application/json',   
-    'Access-Control-Allow-Origin': '*',   //CORS対応
+    'Access-Control-Allow-Origin': '*', // CORS support
   };
 
   try {
@@ -62,9 +66,29 @@ export const handler = async (  //handlerはNodejsが自動的に見つけて実
       };
     }
 
-    const req = JSON.parse(event.body!) as WebSearchRequest;
-    const query = req.query?.trim();
+    if (!event.body) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({ error: 'request body is required' }),
+      };
+    }
 
+    const parseResult = webSearchRequestSchema.safeParse(
+      JSON.parse(event.body)
+    );
+    if (!parseResult.success) {
+      return {
+        statusCode: 400,
+        headers,
+        body: JSON.stringify({
+          error: 'Invalid request format',
+          details: parseResult.error.issues,
+        }),
+      };
+    }
+
+    const query = parseResult.data.query.trim();
     if (!query) {
       return {
         statusCode: 400,
@@ -73,7 +97,7 @@ export const handler = async (  //handlerはNodejsが自動的に見つけて実
       };
     }
  
-    const items = await searchUsingTavily(query);  //生データが返ってくる。
+    const items = await searchUsingTavily(query); // raw data comes back
 
     const response: WebSearchResponse = { items }; 
 
