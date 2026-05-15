@@ -55,7 +55,8 @@ export type RagParams = {
   referenceItems?: RetrieveResultItem[];
 };
 
-export type WebSearchParams = {     //useWebSearchChat.tsで実際に引数を入力。 ~ claude.tsでプロンプト分岐　
+export type WebSearchParams = {
+  // args are filled in useWebSearchChat.ts; prompt branching happens in claude.ts
   promptType: 'RETRIEVE' | 'SYSTEM_CONTEXT';
   retrieveQueries?: string[];
   referenceItems?: WebSearchResultItem[];
@@ -108,7 +109,8 @@ export type PromptList = {
   experimental?: boolean;
 }[];
 
-export interface Prompter {  //claude.tsで詳細なプロンプトを書いている。
+export interface Prompter {
+  // detailed prompts are written in claude.ts
   systemContext(pathname: string): string;
   chatPrompt(params: ChatParams): string;
   summarizePrompt(params: SummarizeParams): string;
