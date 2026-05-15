@@ -45,8 +45,8 @@ export const handler = async (  //handlerはNodejsが自動的に見つけて実
   event: lambda.APIGatewayProxyEvent
 ): Promise<lambda.APIGatewayProxyResult> => {
   const headers = {
-    'Content-Type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
+    'Content-Type': 'application/json',   
+    'Access-Control-Allow-Origin': '*',   //CORS対応
   };
 
   try {
@@ -72,10 +72,10 @@ export const handler = async (  //handlerはNodejsが自動的に見つけて実
         body: JSON.stringify({ error: 'query is required' }),
       };
     }
+ 
+    const items = await searchUsingTavily(query);  //生データが返ってくる。
 
-    const items = await searchUsingTavily(query);
-
-    const response: WebSearchResponse = { items }; //不明点
+    const response: WebSearchResponse = { items }; 
 
     return {
       statusCode: 200,
