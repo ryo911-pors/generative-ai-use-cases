@@ -1,4 +1,4 @@
-//generative-ai-use-cases-stack.tsはスタックであり、複数のコンストラクトを保有している。web.tsなど
+// generative-ai-use-cases-stack.ts is the stack and owns multiple constructs such as web.ts.
 import { Stack, StackProps, CfnOutput, Duration } from 'aws-cdk-lib';
 import { Construct } from 'constructs';
 import {
@@ -274,7 +274,7 @@ export class GenerativeAiUseCasesStack extends Stack {
     }
 
     // Web Frontend
-    const web = new Web(this, 'Api', { 
+    const web = new Web(this, 'Api', {
       // Auth
       userPoolId: auth.userPool.userPoolId,
       userPoolClientId: auth.client.userPoolClientId,

@@ -1,9 +1,7 @@
-//lambda関数定義 
-//NodejsFunctionでlambdaが定義される。
-//lambdaIntegrationでAPI Gatewayルートと結合。
-//環境変数はenvironmentで設定される。
-
-
+// Lambda function definitions
+// NodejsFunction defines the Lambda.
+// LambdaIntegration wires it to API Gateway routes.
+// Environment variables are configured via `environment`.
 
 import { Stack, Duration, RemovalPolicy } from 'aws-cdk-lib';
 import {
@@ -687,7 +685,8 @@ export class Api extends Construct {
       securityGroups,
     });
 
-    const webSearchFunction = new NodejsFunction(this, 'WebSearch', {  //lambda関数定義
+    const webSearchFunction = new NodejsFunction(this, 'WebSearch', {
+      // Lambda function definition
       runtime: LAMBDA_RUNTIME_NODEJS,
       entry: './lambda/webSearch.ts',
       timeout: Duration.minutes(1),
@@ -1097,7 +1096,7 @@ export class Api extends Construct {
       commonAuthorizerProps
     );
 
-    //URLのルーティングの追加
+    // Add URL routing
     const webSearchResource = api.root.addResource('web-search');
     // POST: /web-search
     webSearchResource.addMethod(

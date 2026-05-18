@@ -1,5 +1,5 @@
-//parameter.ts の getParams で stackInputSchema.parse() → convertToModelConfiguration() で変換 → 最終的に   
-//ProcessedStackInput 型として返す
+// parameter.ts's getParams runs stackInputSchema.parse() -> convertToModelConfiguration()
+// and finally returns a ProcessedStackInput.
 
 import { z } from 'zod';
 
@@ -212,8 +212,9 @@ const baseStackInputSchema = z.object({
   closedNetworkCreateResolverEndpoint: z.boolean().default(true),
 });
 
-// 自由な書き方を受け付ける。
-export const stackInputSchema = baseStackInputSchema.refine( //追加情報
+// Allow flexible input shapes.
+export const stackInputSchema = baseStackInputSchema.refine(
+  // Additional validation
   (data) => {
     // If searchApiKey is provided, searchEngine must also be provided
     if (data.searchApiKey && !data.searchEngine) {

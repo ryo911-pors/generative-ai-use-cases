@@ -9,10 +9,9 @@ import { loadBrandingConfig } from './branding';
 
 // Get parameters from CDK Context
 const getContext = (app: cdk.App): StackInput => {
-  const params = stackInputSchema.parse(app.node.getAllContext()); //cdk.jsonのcontextをzodで通し検証。空の場合zodのdefaultで対応。
+  const params = stackInputSchema.parse(app.node.getAllContext()); // Validate cdk.json context via zod; missing fields fall back to zod defaults.
   return params;
 };
-
 
 const applyEnvSecrets = <T extends StackInput>(params: T): T => {
   if (!params.searchApiKey && process.env.TAVILY_API_KEY) {
@@ -21,7 +20,7 @@ const applyEnvSecrets = <T extends StackInput>(params: T): T => {
   return params;
 };
 
-// 環境ごと (dev/staging/prod) の設定をコードで直接書きたい人向け
+// For users who prefer to define per-environment (dev/staging/prod) settings directly in code.
 const envs: Record<string, Partial<StackInput>> = {
   // If you want to define an anonymous environment, uncomment the following and the content of cdk.json will be ignored.
   // If you want to define an anonymous environment in parameter.ts, uncomment the following and the content of cdk.json will be ignored.
@@ -41,7 +40,7 @@ const envs: Record<string, Partial<StackInput>> = {
   // If you need other environments, customize them as needed
 };
 
-// 上記のconst envsを見る
+// Look up the const envs above.
 export const getParams = (app: cdk.App): ProcessedStackInput => {
   // By default, get parameters from CDK Context
   let params = getContext(app);
@@ -54,8 +53,8 @@ export const getParams = (app: cdk.App): ProcessedStackInput => {
     });
   }
 
-  //  - 文字列だけ: "anthropic.claude-3-5-sonnet" → リージョンは modelRegion を使う
-  //  - オブジェクト: { modelId: "...", region: "us-west-2" } → 個別リージョン指定
+  //  - string only: "anthropic.claude-3-5-sonnet" -> uses modelRegion as the region
+  //  - object: { modelId: "...", region: "us-west-2" } -> per-model region override
   params = applyEnvSecrets(params);
   // Make the format of modelIds, imageGenerationModelIds consistent
   const convertToModelConfiguration = (
