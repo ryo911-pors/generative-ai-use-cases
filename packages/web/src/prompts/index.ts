@@ -60,7 +60,6 @@ export type WebSearchParams = {
   promptType: 'RETRIEVE' | 'SYSTEM_CONTEXT';
   retrieveQueries?: string[];
   referenceItems?: WebSearchResultItem[];
-  aggregatedAnswer?: string;
 };
 
 export type VideoAnalyzerParams = {

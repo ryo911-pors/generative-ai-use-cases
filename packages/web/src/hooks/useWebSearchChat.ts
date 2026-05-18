@@ -87,11 +87,9 @@ const useWebSearchChat = (id: string, chatId?: string) => {
 
       // Step 2: Call the web search API
       let items: WebSearchResultItem[] = [];
-      let aggregatedAnswer: string | undefined;
       try {
         const res = await search(query);
         items = res.data.items ?? [];
-        aggregatedAnswer = res.data.answer;
       } catch (error) {
         console.error(error);
         popMessage();
@@ -112,7 +110,6 @@ const useWebSearchChat = (id: string, chatId?: string) => {
         prompter.webSearchPrompt({
           promptType: 'SYSTEM_CONTEXT',
           referenceItems: items,
-          ...(aggregatedAnswer ? { aggregatedAnswer } : {}),
         })
       );
 

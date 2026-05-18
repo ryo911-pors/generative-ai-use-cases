@@ -366,18 +366,9 @@ ${params
   .join(',\n')}
 ]
 </Search results>
-${
-  params.aggregatedAnswer
-    ? `
-<Aggregated answer>
-The following is a pre-aggregated answer synthesized by the search engine from the same search results above. Treat this as a high-signal summary, but still cite the original SourceIds from <Search results> when you use specific facts.
-${params.aggregatedAnswer}
-</Aggregated answer>
-`
-    : ''
-}
+
 <Answer rules>
-* Please answer the question based on <Search results>${params.aggregatedAnswer ? ' and <Aggregated answer>' : ''}. Prefer newer and more reliable information.
+* Please answer the question based on <Search results>. Prefer newer and more reliable information.
 * Add the SourceId of the referenced search result in the format [^<SourceId>] at the end of each relevant claim. The same SourceId can be used multiple times.
 * At least one [^<SourceId>] must appear whenever you cite information from the search results.
 * If the information in <Search results> is not enough to answer, clearly state that the information was insufficient and suggest rephrasing the question.
