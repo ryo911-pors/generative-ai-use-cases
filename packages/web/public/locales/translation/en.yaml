@@ -790,6 +790,14 @@ landing:
         information and format it into a coherent text. The extracted content
         can be used in other use cases such as summarization and translation.
       title: Web Content Extraction
+    web_search_chat:
+      description: >-
+        In Web Search Chat, the LLM leverages a web search engine (Tavily) to
+        fetch up-to-date information and answers based on the search results.
+        You can chat about recent news or the latest technical information that
+        the model alone would not know, and you can also review the source URLs
+        used in the response.
+      title: Web Search Chat
     writer:
       description: >-
         A tool for writing assistance, text refinement, and proofreading. You
@@ -821,6 +829,8 @@ language:
   th: Thai
   vi: Vietnamese
   zh: Chinese
+markdown:
+  footnoteLabel: References
 mcp_chat:
   loading_message: Connecting to MCP server. This may take some time. Please wait...
   title: MCP Chat

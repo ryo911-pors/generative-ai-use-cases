@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState, memo } from 'react';
+import { useTranslation } from 'react-i18next';
 import { BaseProps } from '../@types/common';
 import { default as ReactMarkdown } from 'react-markdown';
 import remarkGfm from 'remark-gfm';
@@ -243,13 +244,17 @@ const CodeRenderer = memo(
 );
 
 const Markdown = memo(({ className, prefix, children }: Props) => {
+  const { t } = useTranslation();
   return (
     <ReactMarkdown
       className={`${className ?? ''} prose max-w-full`}
       children={children}
       remarkPlugins={[remarkGfm, remarkBreaks, remarkMath]}
       rehypePlugins={[rehypeKatex]}
-      remarkRehypeOptions={{ clobberPrefix: prefix }}
+      remarkRehypeOptions={{
+        clobberPrefix: prefix,
+        footnoteLabel: t('markdown.footnoteLabel'),
+      }}
       components={{
         a: LinkRenderer,
         img: ImageRenderer,
