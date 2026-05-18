@@ -15,7 +15,7 @@ const webSearchRequestSchema = z.object({
 const searchUsingTavily = async (
   // ask Tavily to search, reshape into WebSearchResultItem[]
   query: string
-): Promise<WebSearchResultItem[]> => {
+): Promise<{ items: WebSearchResultItem[]; answer?: string }> => {
   const searchUrl = 'https://api.tavily.com/search';
   const searchApiKey = process.env.SEARCH_API_KEY || '';
   const response = await fetch(searchUrl, {
@@ -27,8 +27,8 @@ const searchUsingTavily = async (
     body: JSON.stringify({
       // what we send
       query,
-      search_depth: 'basic',
-      include_answer: false,
+      search_depth: 'advanced',
+      include_answer: true,
       include_images: false,
       include_raw_content: false,
       max_results: MAX_RESULTS,
@@ -38,7 +38,7 @@ const searchUsingTavily = async (
     throw new Error(`Tavily Search API failed: ${response.status}`);
   }
   const data = await response.json(); // parse Tavily's JSON string into a JS object
-  return (data.results ?? []).map(
+  const items = (data.results ?? []).map(
     (result: TavilySearchResult): WebSearchResultItem => ({
       // arg is of type TavilySearchResult
       title: result.title,
@@ -50,6 +50,12 @@ const searchUsingTavily = async (
       ...(result.author ? { author: result.author } : {}),
     })
   );
+  return {
+    items,
+    ...(typeof data.answer === 'string' && data.answer.length > 0
+      ? { answer: data.answer }
+      : {}),
+  };
 };
 
 export const handler = async (
@@ -105,9 +111,12 @@ export const handler = async (
       };
     }
 
-    const items = await searchUsingTavily(query); // raw data comes back
+    const { items, answer } = await searchUsingTavily(query); // raw data comes back
 
-    const response: WebSearchResponse = { items };
+    const response: WebSearchResponse = {
+      items,
+      ...(answer ? { answer } : {}),
+    };
 
     return {
       statusCode: 200,
