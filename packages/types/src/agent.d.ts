@@ -43,4 +43,6 @@ export type TavilySearchResult = {
   content: string;
   score: number;
   raw_content?: string;
+  published_date?: string;
+  author?: string;
 };

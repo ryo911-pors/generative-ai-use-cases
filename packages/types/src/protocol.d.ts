@@ -211,10 +211,13 @@ export type WebTextResponse = {
   text: string;
 };
 
-export type WebSearchResultItem = {  //webSearch.tsでimport 
+export type WebSearchResultItem = {
+  //webSearch.tsでimport
   title: string;
   url: string;
   content: string;
+  publishedDate?: string;
+  author?: string;
 };
 
 export type WebSearchRequest = {

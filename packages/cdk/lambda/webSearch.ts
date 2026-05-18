@@ -12,18 +12,20 @@ const webSearchRequestSchema = z.object({
   query: z.string().min(1).max(500),
 });
 
-const searchUsingTavily = async ( // ask Tavily to search, reshape into WebSearchResultItem[]
+const searchUsingTavily = async (
+  // ask Tavily to search, reshape into WebSearchResultItem[]
   query: string
 ): Promise<WebSearchResultItem[]> => {
   const searchUrl = 'https://api.tavily.com/search';
   const searchApiKey = process.env.SEARCH_API_KEY || '';
-  const response = await fetch(searchUrl, { 
+  const response = await fetch(searchUrl, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${searchApiKey}`,
     },
-    body: JSON.stringify({ // what we send
+    body: JSON.stringify({
+      // what we send
       query,
       search_depth: 'basic',
       include_answer: false,
@@ -37,19 +39,25 @@ const searchUsingTavily = async ( // ask Tavily to search, reshape into WebSearc
   }
   const data = await response.json(); // parse Tavily's JSON string into a JS object
   return (data.results ?? []).map(
-    (result: TavilySearchResult): WebSearchResultItem => ({ // arg is of type TavilySearchResult
+    (result: TavilySearchResult): WebSearchResultItem => ({
+      // arg is of type TavilySearchResult
       title: result.title,
       url: result.url,
       content: result.content ?? '',
+      ...(result.published_date
+        ? { publishedDate: result.published_date }
+        : {}),
+      ...(result.author ? { author: result.author } : {}),
     })
   );
 };
 
-export const handler = async ( // Node.js auto-discovers and runs this; deployed as a Lambda by CDK
+export const handler = async (
+  // Node.js auto-discovers and runs this; deployed as a Lambda by CDK
   event: lambda.APIGatewayProxyEvent
 ): Promise<lambda.APIGatewayProxyResult> => {
   const headers = {
-    'Content-Type': 'application/json',   
+    'Content-Type': 'application/json',
     'Access-Control-Allow-Origin': '*', // CORS support
   };
 
@@ -96,10 +104,10 @@ export const handler = async ( // Node.js auto-discovers and runs this; deployed
         body: JSON.stringify({ error: 'query is required' }),
       };
     }
- 
+
     const items = await searchUsingTavily(query); // raw data comes back
 
-    const response: WebSearchResponse = { items }; 
+    const response: WebSearchResponse = { items };
 
     return {
       statusCode: 200,

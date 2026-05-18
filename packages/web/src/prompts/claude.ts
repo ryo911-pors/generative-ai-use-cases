@@ -345,6 +345,8 @@ Please follow the steps below to answer the user's question. Do not do anything 
 "Title": "The title of the web page.",
 "Url": "The URL of the web page.",
 "Content": "The snippet or summary content of the web page. Please answer the question based on this content.",
+"PublishedDate": "The last updated / published date of the web page (optional, may be omitted).",
+"Author": "The author of the web page (optional, may be omitted).",
 }[]
 </Search results JSON format>
 
@@ -357,6 +359,8 @@ ${params
       Title: item.title,
       Url: item.url,
       Content: item.content,
+      ...(item.publishedDate ? { PublishedDate: item.publishedDate } : {}),
+      ...(item.author ? { Author: item.author } : {}),
     })}`;
   })
   .join(',\n')}

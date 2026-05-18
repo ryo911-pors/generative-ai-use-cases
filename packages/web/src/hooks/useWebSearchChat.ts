@@ -132,11 +132,14 @@ const useWebSearchChat = (id: string, chatId?: string) => {
         (message: string) => {
           // Postprocess: append markdown footnotes for cited sources only
           const footnote = items
-            .map((item, idx) =>
-              message.includes(`[^${idx}]`)
-                ? `[^${idx}]: [${item.title}](${item.url})`
-                : ''
-            )
+            .map((item, idx) => {
+              if (!message.includes(`[^${idx}]`)) return '';
+              const meta = [item.author, item.publishedDate]
+                .filter((x) => x)
+                .join(', ');
+              const suffix = meta ? ` — ${meta}` : '';
+              return `[^${idx}]: [${item.title}](${item.url})${suffix}`;
+            })
             .filter((x) => x)
             .join('\n');
           return footnote ? `${message}\n\n${footnote}` : message;
