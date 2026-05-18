@@ -226,6 +226,7 @@ export type WebSearchRequest = {
 
 export type WebSearchResponse = {
   items: WebSearchResultItem[];
+  answer?: string;
 };
 
 export type CreateShareIdResponse = {
