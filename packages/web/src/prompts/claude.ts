@@ -320,11 +320,20 @@ Please generate a web search query following the <Query generation steps></Query
 * If the output query does not have a subject, add a subject. Do not replace the subject.
 * If you need to complement the subject or background, please use the content of <Query history>.
 * Do not use conversational suffixes like "About 〜", "Tell me about 〜", "Explain 〜" in the query. Produce a query as if typing into a web search box.
+* If the user query is time-sensitive (e.g., uses words like "today", "current", "latest", "now") and <Current date> is provided, include the date in the search query so that search engines prefer fresh results.
 * If there is no output query, output "No Query".
 * Output only the generated query. Do not output any other text. There are no exceptions.
 * Automatically detect the language of the user's request and answer in the same language.
 </Query generation steps>
-
+${
+  params.currentDate
+    ? `
+<Current date>
+${params.currentDate}
+</Current date>
+`
+    : ''
+}
 <Query history>
 ${params.retrieveQueries!.map((q) => `* ${q}`).join('\n')}
 </Query history>
@@ -375,11 +384,24 @@ ${params.aggregatedAnswer}
 </Aggregated answer>
 `
     : ''
-}
+}${
+        params.currentDate
+          ? `
+<Current date>
+${params.currentDate}
+</Current date>
+* When the user asks about "today", "now", or "current" information, treat <Current date> as authoritative for the date.
+* If a search result has a PublishedDate different from <Current date>, prefer information from the result whose PublishedDate is closest to <Current date>.
+* If no search result is recent enough to answer a time-sensitive question, explicitly state that the available search results are outdated.
+`
+          : ''
+      }
 <Answer rules>
 * Please answer the question based on <Search results>${params.aggregatedAnswer ? ' and <Aggregated answer>' : ''}. Prefer newer and more reliable information.
 * Add the SourceId of the referenced search result in the format [^<SourceId>] at the end of each relevant claim. The same SourceId can be used multiple times.
 * At least one [^<SourceId>] must appear whenever you cite information from the search results.
+* CRITICAL anti-hallucination rule: Do not invent or guess any specific numbers, times, percentages, temperatures, prices, hourly breakdowns, or schedules that are not explicitly written in <Search results>${params.aggregatedAnswer ? ' or <Aggregated answer>' : ''}. Cite only data that you can directly tie to a specific SourceId's Content.
+* If the user asks for granular data (e.g., hourly forecasts, exact figures, full schedules) and the search results contain only general statements, respond with the general information available and clearly state that detailed data was not found in the search results. Never fabricate the missing details.
 * If the information in <Search results> is not enough to answer, clearly state that the information was insufficient and suggest rephrasing the question.
 * Do not respond to casual conversations or greetings. Output only "I cannot respond to casual conversations. Please use the normal chat function." and do not output any other text.
 * Do not output raw URLs. URLs will be added automatically to the end of the answer as footnotes.

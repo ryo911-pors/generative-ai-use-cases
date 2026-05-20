@@ -57,6 +57,8 @@ const useWebSearchChat = (id: string, chatId?: string) => {
         .filter((m) => m.role === 'user')
         .map((m) => m.content);
 
+      const currentDate = new Date().toISOString().slice(0, 10);
+
       setLoading(true);
       pushMessage('user', content);
       pushMessage('assistant', t('webSearchChat.searching'));
@@ -72,6 +74,7 @@ const useWebSearchChat = (id: string, chatId?: string) => {
               content: prompter.webSearchPrompt({
                 promptType: 'RETRIEVE',
                 retrieveQueries: [...prevQueries, content],
+                currentDate,
               }),
             },
           ],
@@ -113,6 +116,7 @@ const useWebSearchChat = (id: string, chatId?: string) => {
           promptType: 'SYSTEM_CONTEXT',
           referenceItems: items,
           ...(aggregatedAnswer ? { aggregatedAnswer } : {}),
+          currentDate,
         })
       );
 

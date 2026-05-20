@@ -61,6 +61,7 @@ export type WebSearchParams = {
   retrieveQueries?: string[];
   referenceItems?: WebSearchResultItem[];
   aggregatedAnswer?: string;
+  currentDate?: string;
 };
 
 export type VideoAnalyzerParams = {
